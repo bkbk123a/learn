@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableBatchProcessing // Spring batch 실행
+//@EnableBatchProcessing // Spring batch 실행 (spring 3.x.x 에사부터 사용 안함)
 public class JobConfig {
 
     @Bean

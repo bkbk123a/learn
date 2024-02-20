@@ -2,9 +2,8 @@ package com.example.batch.entity.pass;
 
 import com.example.batch.enumerator.PassStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "T_Pass")
-@Builder
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Pass {
 
     @Id
