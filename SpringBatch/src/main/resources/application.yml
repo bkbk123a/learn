@@ -11,5 +11,19 @@ spring:
       minimum-idle: 10
       maximum-pool-size: 200
   batch:
+    job:
+      enabled: false # true : Spring Boot 실행시 등록된 Job 실행.
+      name: addPassesJob
     jdbc:
+      # Batch에 사용되는 SQL 초기화 스크립트를 실행합니다.
+      # 초기 수행한 이후에는 꺼두어도 됩니다.
       initialize-schema: always
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    defer-datasource-initialization: true # script 파일이 hibernate 초기화 이후 동작하게 하기 위한 옵션
+
+  sql.init.mode: always
