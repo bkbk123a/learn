@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface PassRepository extends JpaRepository<Pass, Integer> {
 
-    List<Pass> findByPassStatusAndStartedAtGreaterThanAndExpiredAtLessThan(
+    // startAt < now < expireAt 조회
+    List<Pass> findByPassStatusAndStartedAtLessThanAndExpiredAtGreaterThan(
             PassStatus status, LocalDateTime now1, LocalDateTime now2);
 }
