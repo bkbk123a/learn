@@ -2,7 +2,7 @@ package com.example.batch.job.tasklet;
 
 import com.example.batch.entity.pass.Pass;
 import com.example.batch.entity.pass.UserGroup;
-import com.example.batch.enumerator.PassStatus;
+import com.example.batch.enumerator.ProvidePassStatus;
 import com.example.batch.repository.pass.UserGroupRepository;
 import com.example.batch.service.PassService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 
-Tasklet을 사용한 Task 기반 처리
-- 배치 처리 과정이 비교적 쉬운 경우
--
+// Tasklet을 사용한 Task 기반 처리
+//- 배치 처리 과정이 비교적 쉬운 경우
+//- Step이 중지될 때까지 execute 메서드가 계속 반복해서 수행하고 수행할 때마다 독립적인 트랜잭션이 얻어진다.
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class AddPassesTasklet implements Tasklet {
   public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
     final LocalDateTime startedAt = LocalDateTime.now();
     // Ready 상태의 이용권 조회
-    final List<Pass> passes = passService.getNowPasses(PassStatus.READY, startedAt);
+    final List<Pass> passes = passService.getNowPasses(ProvidePassStatus.READY, startedAt);
     // 이용권 지급할 userGroup 조회
     final List<Integer> userGroupIds = passService.getUserGroupIdsFromPasses(passes);
     final List<UserGroup> userGroups = getUserGroups(userGroupIds);

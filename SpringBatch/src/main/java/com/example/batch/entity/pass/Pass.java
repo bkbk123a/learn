@@ -1,6 +1,6 @@
 package com.example.batch.entity.pass;
 
-import com.example.batch.enumerator.PassStatus;
+import com.example.batch.enumerator.ProvidePassStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,7 +23,7 @@ public class Pass {
     private Integer userGroupId;
 
     @Enumerated(EnumType.STRING)
-    private PassStatus passStatus;
+    private ProvidePassStatus passStatus;
 
     @Column(nullable = false)
     private Integer count;  // 입장권 개수

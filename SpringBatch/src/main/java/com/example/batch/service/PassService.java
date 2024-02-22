@@ -3,9 +3,8 @@ package com.example.batch.service;
 import com.example.batch.entity.pass.Pass;
 import com.example.batch.entity.pass.UserGroup;
 import com.example.batch.entity.pass.UserPass;
-import com.example.batch.enumerator.PassStatus;
+import com.example.batch.enumerator.ProvidePassStatus;
 import com.example.batch.repository.pass.PassRepository;
-import com.example.batch.repository.pass.UserGroupRepository;
 import com.example.batch.repository.pass.UserPassRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.Objects;
 public class PassService {
   private final PassRepository passRepository;
   private final UserPassRepository userPassRepository;
-  private final UserGroupRepository userGroupRepository;
 
   /**
    * 진행중인 이용권 조회
@@ -29,7 +27,7 @@ public class PassService {
    * @param startedAt 시작 시간
    * @return          진행중인 이용권
    */
-  public List<Pass> getNowPasses(PassStatus status, LocalDateTime startedAt) {
+  public List<Pass> getNowPasses(ProvidePassStatus status, LocalDateTime startedAt) {
     return passRepository
         .findByPassStatusAndStartedAtLessThanAndExpiredAtGreaterThan(status, startedAt, startedAt);
   }
@@ -53,10 +51,10 @@ public class PassService {
       List<Long> userIds = getUserIdsFromUserGroups(pass, userGroups);
 
       for (Long userId : userIds) {
-        userPasses.add(UserPass.of(userId, pass));
+        userPasses.add(UserPass.of(userId, pass));  // 이용권 지급 후 유저의 이용권 상태는 Ready
       }
-
-      pass.setPassStatus(PassStatus.COMPLETED);
+      // 이용권 지급 완료
+      pass.setPassStatus(ProvidePassStatus.COMPLETED);
     }
 
     passRepository.saveAll(passes);
@@ -64,7 +62,7 @@ public class PassService {
   }
 
   /**
-   * 유저 ID 획득
+   * 이용권(pass)의 groupId와 일치 하는 유저 Id 획득
    *
    * @param pass 진행중인 이용권
    * @param userGroups 유저 그룹
