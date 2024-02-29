@@ -1,8 +1,7 @@
 package com.example.batch.config.job.chunk;
 
-import com.example.batch.entity.pass.Pass;
+import com.example.batch.entity.pass.UserPass;
 import com.example.batch.enumerator.PassStatus;
-import com.example.batch.enumerator.ProvidePassStatus;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -24,7 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-// [ 이용권 만료 ]
+// [ 사용자의 이용권 만료 ]
 // Chunk를 사용한 chunk(덩어리) 기반 처리
 // ItemReader, ItemProcessor, ItemWriter의 관계 이해 필요
 // 예를 들면 10,000개의 데이터 중 1,000개씩 10개의 덩어리로 수행
@@ -37,17 +36,17 @@ public class ExpirePassJobConfig {
   private final EntityManagerFactory entityManagerFactory;
 
   @Bean
-  public Job ExpirePassJob(JobRepository jobRepository, @Qualifier("ExpirePassStep") Step expirePassStep) {
+  public Job ExpirePassJob(JobRepository jobRepository, @Qualifier("expirePassStep") Step expirePassStep) {
     return new JobBuilder("expirePassJob", jobRepository)
         .start(expirePassStep)
         .build();
   }
 
   @Bean
-  @Qualifier("ExpirePassStep")
-  public Step ExpirePassStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+  @Qualifier("expirePassStep")
+  public Step expirePassStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
     return new StepBuilder("expirePassStep", jobRepository)
-        .<Pass, Pass>chunk(CHUNK_SIZE, transactionManager)
+        .<UserPass, UserPass>chunk(CHUNK_SIZE, transactionManager)
         .reader(expirePassItemReader())
         .processor(expirePassItemProcessor())
         .writer(expireItemWriter())
@@ -56,21 +55,23 @@ public class ExpirePassJobConfig {
 
   @Bean
   @JobScope
-  public JpaCursorItemReader<Pass> expirePassItemReader() {
-    return new JpaCursorItemReaderBuilder<Pass>()
+  public JpaCursorItemReader<UserPass> expirePassItemReader() {
+    return new JpaCursorItemReaderBuilder<UserPass>()
         .name("expirePassItemReader")
         .entityManagerFactory(entityManagerFactory)
         // expireAt(만료시간) 이전의 PROGRESS 상태인 이용권 조회
-        .queryString("SELECT p FROM Pass WHERE p.status = :status and p.expireAt <= expireAt")
-        .parameterValues(Map.of("status", PassStatus.PROGRESS, "endedAt", LocalDateTime.now()))
+        .queryString("SELECT p FROM UserPass AS p " +
+            "WHERE p.passStatus = :passStatus " +
+            "AND p.expiredAt <= :expiredAt")
+        .parameterValues(Map.of("passStatus", PassStatus.PROGRESS, "expiredAt", LocalDateTime.now()))
         .build();
   }
 
   // Reader에서 넘겨준 데이터 개별 건을 가공/처리
   @Bean
-  public ItemProcessor<Pass, Pass> expirePassItemProcessor() {
+  public ItemProcessor<UserPass, UserPass> expirePassItemProcessor() {
     return pass -> {
-      pass.setPassStatus(ProvidePassStatus.COMPLETED); // 만료 처리
+      pass.setPassStatus(PassStatus.EXPIRED); // 만료 처리
       pass.setExpiredAt(LocalDateTime.now());
       return pass;
     };
@@ -79,8 +80,8 @@ public class ExpirePassJobConfig {
   // JpaItemWriter: JPA의 영속성 관리를 위해 EntityManager를 필수로 설정
   // ChunkSize 단위로 묶은 데이터를 한번에 처리
   @Bean
-  public JpaItemWriter<Pass> expireItemWriter() {
-    return new JpaItemWriterBuilder<Pass>()
+  public JpaItemWriter<UserPass> expireItemWriter() {
+    return new JpaItemWriterBuilder<UserPass>()
         .entityManagerFactory(entityManagerFactory)
         .build();
   }
