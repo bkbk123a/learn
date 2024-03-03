@@ -36,7 +36,7 @@ public class ExpirePassJobConfig {
   private final EntityManagerFactory entityManagerFactory;
 
   @Bean
-  public Job ExpirePassJob(JobRepository jobRepository, @Qualifier("expirePassStep") Step expirePassStep) {
+  public Job expirePassJob(JobRepository jobRepository, @Qualifier("expirePassStep") Step expirePassStep) {
     return new JobBuilder("expirePassJob", jobRepository)
         .start(expirePassStep)
         .build();
