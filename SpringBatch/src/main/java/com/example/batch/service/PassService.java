@@ -21,15 +21,15 @@ public class PassService {
   private final UserPassRepository userPassRepository;
 
   /**
-   * 진행중인 이용권 조회
+   * 진행 중인 이용권 조회
    *
    * @param status    이용권 상태
-   * @param startedAt 시작 시간
-   * @return          진행중인 이용권
+   * @param now       시작 시간
+   * @return          진행 중인 이용권
    */
-  public List<Pass> getNowPasses(ProvidePassStatus status, LocalDateTime startedAt) {
-    return passRepository
-        .findByPassStatusAndStartedAtLessThanAndExpiredAtGreaterThan(status, startedAt, startedAt);
+  public List<Pass> getNowPasses(ProvidePassStatus status, LocalDateTime now) {
+    return passRepository   // startAt < now < expiredAt
+        .findByPassStatusAndStartedAtLessThanAndExpiredAtGreaterThan(status, now, now);
   }
 
   public List<Integer> getUserGroupIdsFromPasses(List<Pass> passes) {

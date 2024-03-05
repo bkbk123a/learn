@@ -1,6 +1,5 @@
 package com.example.batch.config.job.tasklet;
 
-import com.example.batch.job.tasklet.AddPassesTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -20,7 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @RequiredArgsConstructor
 public class AddPassJobConfig {
 
-    private final AddPassesTasklet addPassesTasklet;
+    private final AddPassTasklet addPassTasklet;
 
     @Bean
     public Job addPassesJob(JobRepository jobRepository, @Qualifier("addPassesStep") Step addPassesStep) {
@@ -33,7 +32,7 @@ public class AddPassJobConfig {
     @Qualifier("addPassesStep")
     public Step addPassesStep(JobRepository jobRepository, PlatformTransactionManager manager) {
         return new StepBuilder("addPassesStep", jobRepository)
-                .tasklet(addPassesTasklet, manager)
+                .tasklet(addPassTasklet, manager)
                 .build();
     }
 }

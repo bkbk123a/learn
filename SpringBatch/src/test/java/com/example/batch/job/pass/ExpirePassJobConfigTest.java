@@ -5,7 +5,6 @@ import com.example.batch.config.job.chunk.ExpirePassJobConfig;
 import com.example.batch.entity.pass.UserPass;
 import com.example.batch.enumerator.PassStatus;
 import com.example.batch.repository.pass.UserPassRepository;
-import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBatchTest
 @SpringBootTest
 @ContextConfiguration(classes = {ExpirePassJobConfig.class, TestBatchConfig.class})
-public class ExpirePassesJobConfigTest {
+public class ExpirePassJobConfigTest {
 
   @Autowired
   private JobLauncherTestUtils jobLauncherTestUtils;
