@@ -3,8 +3,8 @@ package com.example.batch.config.job.tasklet;
 import com.example.batch.entity.pass.Pass;
 import com.example.batch.entity.pass.UserGroup;
 import com.example.batch.enumerator.ProvidePassStatus;
-import com.example.batch.repository.pass.UserGroupRepository;
 import com.example.batch.service.PassService;
+import com.example.batch.service.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -24,8 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AddPassTasklet implements Tasklet {
 
-  private final UserGroupRepository userGroupRepository;
   private final PassService passService;
+
+  private final UserGroupService userGroupService;
 
   // user group 내 각 사용자들에게 이용권 지급.
   @Override
@@ -35,15 +36,11 @@ public class AddPassTasklet implements Tasklet {
     final List<Pass> passes = passService.getNowPasses(ProvidePassStatus.READY, now);
     // 이용권 지급할 userGroup 조회
     final List<Integer> userGroupIds = passService.getUserGroupIdsFromPasses(passes);
-    final List<UserGroup> userGroups = getUserGroups(userGroupIds);
-
+    final List<UserGroup> userGroups = userGroupService.getUserGroups(userGroupIds);
+    // 이용권 지급
     long addedPassCount = passService.addPasses(passes, userGroups);
 
-    log.info("AddPassesTasklet - execute: 이용권 {}건 추가 완료, startedAt={}", addedPassCount, now);
+    log.info("AddPassTasklet - execute: 이용권 {}건 추가 완료, startedAt={}", addedPassCount, now);
     return RepeatStatus.FINISHED;
-  }
-
-  private List<UserGroup> getUserGroups(List<Integer> userGroupIds) {
-    return userGroupRepository.findByUserGroupIdIn(userGroupIds);
   }
 }

@@ -22,16 +22,16 @@ public class AddPassJobConfig {
     private final AddPassTasklet addPassTasklet;
 
     @Bean
-    public Job addPassesJob(JobRepository jobRepository, @Qualifier("addPassesStep") Step addPassesStep) {
-        return new JobBuilder("addPassesJob", jobRepository)
-                .start(addPassesStep)
+    public Job addPassJob(JobRepository jobRepository, @Qualifier("addPassStep") Step addPassStep) {
+        return new JobBuilder("addPassJob", jobRepository)
+                .start(addPassStep)
                 .build();
     }
 
     @Bean
-    @Qualifier("addPassesStep")
-    public Step addPassesStep(JobRepository jobRepository, PlatformTransactionManager manager) {
-        return new StepBuilder("addPassesStep", jobRepository)
+    @Qualifier("addPassStep")
+    public Step addPassStep(JobRepository jobRepository, PlatformTransactionManager manager) {
+        return new StepBuilder("addPassStep", jobRepository)
                 .tasklet(addPassTasklet, manager)
                 .build();
     }

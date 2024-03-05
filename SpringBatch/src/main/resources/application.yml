@@ -13,7 +13,7 @@ spring:
   batch:
     job:
       enabled: false # true : Spring Boot 실행시 등록된 Job 실행.
-      name: addPassesJob, expirePassJob # 실제 사용할 job 설정
+      name: addPassJob, expirePassJob # 실제 사용할 job 설정
     jdbc:
       # Batch 에 사용 되는 SQL 초기화 script 실행.
       # 초기 수행 이후 꺼도 됩니다.
