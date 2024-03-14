@@ -2,8 +2,6 @@ package com.example.batch.job.pass;
 
 import com.example.batch.config.TestBatchConfig;
 import com.example.batch.config.job.tasklet.AddPassTasklet;
-import com.example.batch.service.PassService;
-import com.example.batch.service.UserGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,16 +21,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class AddPassTaskletTest {
 
   @Mock
-  private PassService passService;
-
-  @Mock
-  private UserGroupService userGroupService;
-
-  @InjectMocks
   private AddPassTasklet addPassTasklet;
 
   @Test
-  public void givenAddPassTaskletWhenExecuteThenWorksFine() {
+  public void givenAddPassTasklet_WhenExecute_ThenWorksFine() {
 
     // given - StepContribution, ChunkContext 생성
     StepExecution stepExecution = new StepExecution("AddPassTaskletTest", new JobExecution(1L));
